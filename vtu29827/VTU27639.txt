@@ -1,0 +1,353 @@
+
+SQL*Plus: Release 11.2.0.2.0 Production on Thu Aug 14 13:50:57 2025
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+SQL> connect
+Enter user-name: system
+Enter password:
+Connected.
+SQL> create table universitypersons(personid int PRIMARY KEY, name varchar(50), dob DATE);
+create table universitypersons(personid int PRIMARY KEY, name varchar(50), dob DATE)
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+SQL> create table universitypersons(personid int PRIMARY KEY, name varchar(50), dob DATE);
+create table universitypersons(personid int PRIMARY KEY, name varchar(50), dob DATE)
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+SQL> create table university_persons(personid int PRIMARY KEY, name varchar(50), dob DATE);
+
+Table created.
+
+SQL> desc university_persons
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PERSONID                                  NOT NULL NUMBER(38)
+ NAME                                               VARCHAR2(50)
+ DOB                                                DATE
+
+SQL>  create table universitystudents(studentid int PRIMARY KEY, personid int, degree varchar(10) CHECK (degree IN('BE','ME','PHD')), batch DATE,FOREIGN KEY (personid) REFERENCES universitypersons(personid));
+ create table universitystudents(studentid int PRIMARY KEY, personid int, degree varchar(10) CHECK (degree IN('BE','ME','PHD')), batch DATE,FOREIGN KEY (personid) REFERENCES universitypersons(personid))
+              *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+SQL>  create table university_students(studentid int PRIMARY KEY, personid int, degree varchar(10) CHECK (degree IN('BE','ME','PHD')), batch DATE,FOREIGN KEY (personid) REFERENCES universitypersons(personid));
+
+Table created.
+
+SQL> desc university_students
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ STUDENTID                                 NOT NULL NUMBER(38)
+ PERSONID                                           NUMBER(38)
+ DEGREE                                             VARCHAR2(10)
+ BATCH                                              DATE
+
+SQL> create table dept(deptid int PRIMARY KEY, deptname varchar(20));
+create table dept(deptid int PRIMARY KEY, deptname varchar(20))
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+SQL> create table dept_(deptid int PRIMARY KEY, deptname varchar(20));
+
+Table created.
+
+SQL> desc dept_
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ DEPTID                                    NOT NULL NUMBER(38)
+ DEPTNAME                                           VARCHAR2(20)
+
+SQL>  create table faculty_(facultyid int PRIMARY KEY, personid int, deptid int, position varchar(20), FOREIGN KEY (personid) REFERENCES universitypersons(personid));
+
+Table created.
+
+SQL> desu faculty_
+SP2-0734: unknown command beginning "desu facul..." - rest of line ignored.
+SQL> desc faculty_
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ FACULTYID                                 NOT NULL NUMBER(38)
+ PERSONID                                           NUMBER(38)
+ DEPTID                                             NUMBER(38)
+ POSITION                                           VARCHAR2(20)
+
+SQL> create table course(courseid int PRIMARY KEY, coursename varchar(25), credits int CHECK (credits BETWEEN 1 and 4), deptid int, FOREIGN KEY (deptid) REFERENCES dept(deptid));
+
+Table created.
+
+SQL> desc course
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ COURSEID                                  NOT NULL NUMBER(38)
+ COURSENAME                                         VARCHAR2(25)
+ CREDITS                                            NUMBER(38)
+ DEPTID                                             NUMBER(38)
+
+SQL> rename faculty to teachingfaculty;
+
+Table renamed.
+
+SQL> desc teachingfaculty;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ FACULTYID                                 NOT NULL NUMBER(38)
+ PERSONID                                           NUMBER(38)
+ DEPTID                                             NUMBER(38)
+ POSITION                                           VARCHAR2(20)
+
+SQL> rename dept to deptdetails;
+
+Table renamed.
+
+SQL> desc  deptdetails;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ DEPTID                                    NOT NULL NUMBER(38)
+ DEPTNAME                                           VARCHAR2(20)
+
+SQL> alter table universitystudents ADD(age int);
+
+Table altered.
+
+SQL> desc universitystudents;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ STUDENTID                                 NOT NULL NUMBER(38)
+ PERSONID                                           NUMBER(38)
+ DEGREE                                             VARCHAR2(10)
+ BATCH                                              DATE
+ AGE                                                NUMBER(38)
+
+SQL> alter table universitystudents ADD contact number(10);
+
+Table altered.
+
+SQL> alter table universitystudents ADD (gender char(1) CHECK (gender IN ('M','F')), email varchar(50));
+
+Table altered.
+
+SQL> desc universitystudents;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ STUDENTID                                 NOT NULL NUMBER(38)
+ PERSONID                                           NUMBER(38)
+ DEGREE                                             VARCHAR2(10)
+ BATCH                                              DATE
+ AGE                                                NUMBER(38)
+ CONTACT                                            NUMBER(10)
+ GENDER                                             CHAR(1)
+ EMAIL                                              VARCHAR2(50)
+
+SQL> alter table universitystudents ADD CONSTRAINT check_age CHECK (age>=17);
+
+Table altered.
+
+SQL> alter table universitystudents ADD CONSTRAINT check_age CHECK (age>=17);
+alter table universitystudents ADD CONSTRAINT check_age CHECK (age>=17)
+                                              *
+ERROR at line 1:
+ORA-02264: name already used by an existing constraint
+
+
+SQL> alter table universitypersons MODIFY name varchar(50) NOT NULL;
+
+Table altered.
+
+SQL>  desc universitypersons;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PERSONID                                  NOT NULL NUMBER(38)
+ NAME                                      NOT NULL VARCHAR2(50)
+ DOB                                                DATE
+
+SQL>  alter table universitystudents ADD CONSTRAINT uemail UNIQUE(email);
+
+Table altered.
+
+SQL> drop table course;
+
+Table dropped.
+
+SQL> drop table deptdetails;
+
+Table dropped.
+
+SQL>  desc deptdetails;
+ERROR:
+ORA-04043: object deptdetails does not exist
+
+
+SQL> select * from universitystudents;
+
+no rows selected
+
+SQL> select * from deptdetails;
+select * from deptdetails
+              *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
+
+SQL>  alter table universitystudents drop column contact;
+
+Table altered.
+
+SQL>  desc universitystudents;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ STUDENTID                                 NOT NULL NUMBER(38)
+ PERSONID                                           NUMBER(38)
+ DEGREE                                             VARCHAR2(10)
+ BATCH                                              DATE
+ AGE                                                NUMBER(38)
+ GENDER                                             CHAR(1)
+ EMAIL                                              VARCHAR2(50)
+
+SQL> alter table teachingfaculty rename to universityfaculty;
+
+Table altered.
+
+SQL> SQL>  desc universitystudents;
+SP2-0734: unknown command beginning "SQL>  desc..." - rest of line ignored.
+SQL>  Name                                      Null?    Type
+SP2-0734: unknown command beginning "Name      ..." - rest of line ignored.
+SQL>  ----------------------------------------- -------- ----------------------------
+SQL>  STUDENTID                                 NOT NULL NUMBER(38)
+SP2-0734: unknown command beginning "STUDENTID ..." - rest of line ignored.
+SQL>  PERSONID                                           NUMBER(38)
+SP2-0734: unknown command beginning "PERSONID  ..." - rest of line ignored.
+SQL>  DEGREE                                             VARCHAR2(10)
+SP2-0734: unknown command beginning "DEGREE    ..." - rest of line ignored.
+SQL>  BATCH                                              DATE
+SP2-0734: unknown command beginning "BATCH     ..." - rest of line ignored.
+SP2-0044: For a list of known commands enter HELP
+and to leave enter EXIT.
+SQL>  AGE                                                NUMBER(38)
+SP2-0734: unknown command beginning "AGE             ..." - rest of line ignored.
+SQL>  GENDER                                             CHAR(1)
+SP2-0734: unknown command beginning "GENDER    ..." - rest of line ignored.
+SQL>  EMAIL                                              VARCHAR2(50)
+SP2-0734: unknown command beginning "EMAIL     ..." - rest of line ignored.
+SQL>
+SQL> SQL> alter table teachingfaculty rename to universityfaculty;SQL>  desc universitystudents;
+SP2-0734: unknown command beginning "SQL> alter..." - rest of line ignored.
+SP2-0044: For a list of known commands enter HELP
+and to leave enter EXIT.
+SQL>  Name                                      Null?    Type
+SP2-0734: unknown command beginning "Name      ..." - rest of line ignored.
+SQL>  ----------------------------------------- -------- ----------------------------
+SQL>  STUDENTID                                 NOT NULL NUMBER(38)
+SP2-0734: unknown command beginning "STUDENTID ..." - rest of line ignored.
+SQL>  PERSONID                                           NUMBER(38)
+SP2-0734: unknown command beginning "PERSONID  ..." - rest of line ignored.
+SQL>  DEGREE                                             VARCHAR2(10)
+SP2-0734: unknown command beginning "DEGREE    ..." - rest of line ignored.
+SQL>  BATCH                                              DATE
+SP2-0734: unknown command beginning "BATCH     ..." - rest of line ignored.
+SP2-0044: For a list of known commands enter HELP
+and to leave enter EXIT.
+SQL>  AGE                                                NUMBER(38)
+SP2-0734: unknown command beginning "AGE             ..." - rest of line ignored.
+SQL>  GENDER                                             CHAR(1)
+SP2-0734: unknown command beginning "GENDER    ..." - rest of line ignored.
+SQL>  EMAIL                                              VARCHAR2(50)
+SP2-0734: unknown command beginning "EMAIL     ..." - rest of line ignored.
+SQL>
+SQL> SQL> alter table teachingfaculty rename to universityfaculty;SQL>  desc universitystudents;
+SP2-0734: unknown command beginning "SQL> alter..." - rest of line ignored.
+SP2-0044: For a list of known commands enter HELP
+and to leave enter EXIT.
+SQL>  Name                                      Null?    Type
+SP2-0734: unknown command beginning "Name      ..." - rest of line ignored.
+SQL>  ----------------------------------------- -------- ----------------------------
+SQL>  STUDENTID                                 NOT NULL NUMBER(38)
+SP2-0734: unknown command beginning "STUDENTID ..." - rest of line ignored.
+SQL>  PERSONID                                           NUMBER(38)
+SP2-0734: unknown command beginning "PERSONID  ..." - rest of line ignored.
+SQL>  DEGREE                                             VARCHAR2(10)
+SP2-0734: unknown command beginning "DEGREE    ..." - rest of line ignored.
+SQL>  BATCH                                              DATE
+SP2-0734: unknown command beginning "BATCH     ..." - rest of line ignored.
+SP2-0044: For a list of known commands enter HELP
+and to leave enter EXIT.
+SQL>  AGE                                                NUMBER(38)
+SP2-0734: unknown command beginning "AGE             ..." - rest of line ignored.
+SQL>  GENDER                                             CHAR(1)
+SP2-0734: unknown command beginning "GENDER    ..." - rest of line ignored.
+SQL>  EMAIL                                              VARCHAR2(50)
+SP2-0734: unknown command beginning "EMAIL     ..." - rest of line ignored.
+SQL>
+SQL> SQL>  desc universitystudents;
+SP2-0734: unknown command beginning "SQL>  desc..." - rest of line ignored.
+SP2-0044: For a list of known commands enter HELP
+and to leave enter EXIT.
+SQL>  Name                                      Null?    Type
+SP2-0734: unknown command beginning "Name      ..." - rest of line ignored.
+SQL>  ----------------------------------------- -------- ----------------------------
+SQL>  STUDENTID                                 NOT NULL NUMBER(38)
+SP2-0734: unknown command beginning "STUDENTID ..." - rest of line ignored.
+SQL>  PERSONID                                           NUMBER(38)
+SP2-0734: unknown command beginning "PERSONID  ..." - rest of line ignored.
+SQL>  DEGREE                                             VARCHAR2(10)
+SP2-0734: unknown command beginning "DEGREE    ..." - rest of line ignored.
+SQL>  BATCH                                              DATE
+SP2-0734: unknown command beginning "BATCH     ..." - rest of line ignored.
+SP2-0044: For a list of known commands enter HELP
+and to leave enter EXIT.
+SQL>  AGE                                                NUMBER(38)
+SP2-0734: unknown command beginning "AGE             ..." - rest of line ignored.
+SQL>  GENDER                                             CHAR(1)
+SP2-0734: unknown command beginning "GENDER    ..." - rest of line ignored.
+SQL>  EMAIL                                              VARCHAR2(50)
+SP2-0734: unknown command beginning "EMAIL     ..." - rest of line ignored.
+SQL>
+SQL>  desc universityfaculty
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ FACULTYID                                 NOT NULL NUMBER(38)
+ PERSONID                                           NUMBER(38)
+ DEPTID                                             NUMBER(38)
+ POSITION                                           VARCHAR2(20)
+
+SQL> insert into universitypersons values (&personid, '&name',TO_DATE('&dob','DD-MM-YYYY'));
+Enter value for personid: 27639
+Enter value for name: SAI REDDY
+Enter value for dob: 12/10/2006
+old   1: insert into universitypersons values (&personid, '&name',TO_DATE('&dob','DD-MM-YYYY'))
+new   1: insert into universitypersons values (27639, 'SAI REDDY',TO_DATE('12/10/2006','DD-MM-YYYY'))
+
+1 row created.
+
+SQL> /
+Enter value for personid: 28036
+Enter value for name: sanjuuu
+Enter value for dob: 14/10/2006
+old   1: insert into universitypersons values (&personid, '&name',TO_DATE('&dob','DD-MM-YYYY'))
+new   1: insert into universitypersons values (28036, 'sanjuuu',TO_DATE('14/10/2006','DD-MM-YYYY'))
+
+1 row created.
+
+SQL>
+
+
+
+
+
+
+
+
+
+
+
+
